@@ -24,6 +24,9 @@ namespace SimpleJSONTreeViewer
         private TextBox textBox; // 查找关键字的文本框
         private Label labelMatchResult; // 显示查找结果
         private ContextMenuStrip contextMenuStrip;
+        private ToolStripMenuItem toolStripMenuItemCopyKey;
+        private ToolStripMenuItem toolStripMenuItemCopyValue;
+        private ToolStripMenuItem toolStripMenuItemCopyObj;
         private Dictionary<string, MatchResult> matchResultCache = new Dictionary<string, MatchResult>();
 
         /// <summary>
@@ -140,13 +143,16 @@ namespace SimpleJSONTreeViewer
 
             this.contextMenuStrip = new ContextMenuStrip();
 
-            ToolStripMenuItem toolStripMenuItemCopyKey = new ToolStripMenuItem("复制Key");
-            toolStripMenuItemCopyKey.Click += new EventHandler(OnCopyKey);
+            this.toolStripMenuItemCopyKey = new ToolStripMenuItem("复制Key");
+            this.toolStripMenuItemCopyKey.Click += new EventHandler(OnCopyKey);
 
-            ToolStripMenuItem toolStripMenuItemCopyValue = new ToolStripMenuItem("复制Value");
-            toolStripMenuItemCopyValue.Click += new EventHandler(OnCopyValue);
+            this.toolStripMenuItemCopyValue = new ToolStripMenuItem("复制Value");
+            this.toolStripMenuItemCopyValue.Click += new EventHandler(OnCopyValue);
 
-            this.contextMenuStrip.Items.AddRange(new ToolStripItem[] { toolStripMenuItemCopyKey, toolStripMenuItemCopyValue });
+            this.toolStripMenuItemCopyObj = new ToolStripMenuItem("复制对象");
+            this.toolStripMenuItemCopyObj.Click += new EventHandler(OnCopyObj);
+
+            this.contextMenuStrip.Items.AddRange(new ToolStripItem[] { this.toolStripMenuItemCopyKey, this.toolStripMenuItemCopyValue, this.toolStripMenuItemCopyObj });
 
             this.treeview = new TreeView();
             this.treeview.Font = new Font("Microsoft Sans Serif", 10);
@@ -202,10 +208,32 @@ namespace SimpleJSONTreeViewer
         {
             this.Copy(false);
         }
+        private void OnCopyObj(object sender, EventArgs e)
+        {
+            TreeNode treeNodeSelected = this.treeview.SelectedNode;
+
+            if (treeNodeSelected != null && treeNodeSelected.Name != LeafNode)
+            {
+                Clipboard.SetText((treeNodeSelected.Tag as TreeNodeContext).Value.ToString());
+            }
+        }
         private void OnMouseClick(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Right && this.treeview.SelectedNode != null && this.treeview.SelectedNode.Name == LeafNode)
+            if (e.Button == MouseButtons.Right && this.treeview.SelectedNode != null)
             {
+                if (this.treeview.SelectedNode.Name == LeafNode)
+                {
+                    this.toolStripMenuItemCopyObj.Enabled = false;
+                    this.toolStripMenuItemCopyKey.Enabled = true;
+                    this.toolStripMenuItemCopyValue.Enabled = true;
+                }
+                else
+                {
+                    this.toolStripMenuItemCopyObj.Enabled = true;
+                    this.toolStripMenuItemCopyKey.Enabled = false;
+                    this.toolStripMenuItemCopyValue.Enabled = false;
+                }
+
                 this.contextMenuStrip.Show(this.treeview, e.Location);
             }
         }
