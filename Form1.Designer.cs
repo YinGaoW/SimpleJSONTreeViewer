@@ -88,40 +88,47 @@ namespace SimpleJSONTreeViewer
             searchButton.Click += new EventHandler(OnSearchBtnClick);
             this.topPanel.Controls.Add(searchButton);
 
+            Button clearButton = new Button();
+            clearButton.Left = 360;
+            clearButton.Text = "清除";
+            clearButton.Size = new Size(50, 21);
+            clearButton.Click += new EventHandler(OnClearBtnClick);
+            this.topPanel.Controls.Add(clearButton);
+
             Button lastButton = new Button();
-            lastButton.Left = 360;
+            lastButton.Left = 415;
             lastButton.Text = "上一个";
             lastButton.Size = new Size(50, 21);
             lastButton.Click += new EventHandler(OnLastBtnClick);
             this.topPanel.Controls.Add(lastButton);
 
             Button nextButton = new Button();
-            nextButton.Left = 415;
+            nextButton.Left = 470;
             nextButton.Text = "下一个";
             nextButton.Size = new Size(50, 21);
             nextButton.Click += new EventHandler(OnNextBtnClick);
             this.topPanel.Controls.Add(nextButton);
 
             Button expandAllButton = new Button();
-            expandAllButton.Left = 470;
+            expandAllButton.Left = 525;
             expandAllButton.Text = "展开所有节点";
             expandAllButton.Size = new Size(90, 21);
             expandAllButton.Click += new EventHandler(OnExpandAllBtnClick);
             this.topPanel.Controls.Add(expandAllButton);
 
             Button collapseAllButton = new Button();
-            collapseAllButton.Left = 565;
+            collapseAllButton.Left = 620;
             collapseAllButton.Text = "收起所有节点";
             collapseAllButton.Size = new Size(90, 21);
             collapseAllButton.Click += new EventHandler(OnCollapseAllBtnClick);
             this.topPanel.Controls.Add(collapseAllButton);
 
-            Button clearButton = new Button();
+            /*Button clearButton = new Button();
             clearButton.Left = 660;
             clearButton.Text = "清除";
             clearButton.Size = new Size(50, 21);
             clearButton.Click += new EventHandler(OnClearBtnClick);
-            this.topPanel.Controls.Add(clearButton);
+            this.topPanel.Controls.Add(clearButton);*/
 
             Label label = new Label();
             label.Text = "查找结果";
