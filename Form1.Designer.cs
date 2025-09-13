@@ -123,13 +123,6 @@ namespace SimpleJSONTreeViewer
             collapseAllButton.Click += new EventHandler(OnCollapseAllBtnClick);
             this.topPanel.Controls.Add(collapseAllButton);
 
-            /*Button clearButton = new Button();
-            clearButton.Left = 660;
-            clearButton.Text = "清除";
-            clearButton.Size = new Size(50, 21);
-            clearButton.Click += new EventHandler(OnClearBtnClick);
-            this.topPanel.Controls.Add(clearButton);*/
-
             Label label = new Label();
             label.Text = "查找结果";
             label.Left = 720;
@@ -239,14 +232,12 @@ namespace SimpleJSONTreeViewer
         /// <param name="e"></param>
         private void OnClearBtnClick(object sender, EventArgs e)
         {
-            this.treeview.Nodes.Clear();
             this.textBox.Text = string.Empty;
             this.matchResultCache.Clear();
             this.labelMatchResult.Text = string.Empty;
-            this.dataSize = 0;
         }
         /// <summary>
-        /// 展开所有节点按点击时触发
+        /// 展开所有节点按钮点击时触发
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -257,7 +248,9 @@ namespace SimpleJSONTreeViewer
 
             if (this.dataSize <= MaxSize || MessageBox.Show("当前加载的JSON数据大于1M，可能耗时较久，是否继续？", "提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK)
             {
+                this.treeview.BeginUpdate();
                 this.treeview.ExpandAll();
+                this.treeview.EndUpdate();
                 this.treeview.Nodes[0].EnsureVisible(); // 全部展开时默认会到最底部，此时设置确保根节点可见，使得不滚动到底部
             }
         }
