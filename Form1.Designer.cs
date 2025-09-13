@@ -23,6 +23,7 @@ namespace SimpleJSONTreeViewer
         private MenuStrip menuStrip;
         private TextBox textBox; // 查找关键字的文本框
         private Label labelMatchResult; // 显示查找结果
+        private ContextMenuStrip contextMenuStrip;
         private Dictionary<string, MatchResult> matchResultCache = new Dictionary<string, MatchResult>();
 
         /// <summary>
@@ -137,6 +138,15 @@ namespace SimpleJSONTreeViewer
             this.topPanel.Controls.Add(this.labelMatchResult);
             this.Controls.Add(this.topPanel);
 
+            this.contextMenuStrip = new ContextMenuStrip();
+
+            ToolStripMenuItem toolStripMenuItemCopyKey = new ToolStripMenuItem("复制Key");
+            toolStripMenuItemCopyKey.Click += new EventHandler(OnCopyKey);
+
+            ToolStripMenuItem toolStripMenuItemCopyValue = new ToolStripMenuItem("复制Value");
+            toolStripMenuItemCopyValue.Click += new EventHandler(OnCopyValue);
+
+            this.contextMenuStrip.Items.AddRange(new ToolStripItem[] { toolStripMenuItemCopyKey, toolStripMenuItemCopyValue });
 
             this.treeview = new TreeView();
             this.treeview.Font = new Font("Microsoft Sans Serif", 10);
@@ -146,6 +156,7 @@ namespace SimpleJSONTreeViewer
             this.treeview.Left = this.ClientSize.Width / 2 - this.treeview.Width / 2;
             this.treeview.Top = (this.ClientSize.Height - this.topPanel.Height - this.menuStrip.Height) / 2 - this.treeview.Height / 2 + this.topPanel.Height + this.menuStrip.Height;
             this.treeview.BeforeExpand += new TreeViewCancelEventHandler(OnBeforTreeNodeExpand);
+            this.treeview.MouseClick += new MouseEventHandler(OnMouseClick);
             Controls.Add(this.treeview);
         }
         #endregion
@@ -163,6 +174,39 @@ namespace SimpleJSONTreeViewer
             if (this.topPanel != null)
             {
                 this.topPanel.Size = new Size(this.ClientSize.Width - 10, 21);
+            }
+        }
+        private void Copy(bool isKey)
+        {
+            if (this.treeview.Nodes.Count > 0)
+            {
+                TreeNode treeNodeSelected = this.treeview.SelectedNode;
+
+                if (treeNodeSelected != null && treeNodeSelected.Name == LeafNode)
+                {
+                    int index = treeNodeSelected.Text.IndexOf(":");
+
+                    if (index != -1)
+                    {
+                        string data = isKey ? treeNodeSelected.Text.Substring(0, index).Trim() : treeNodeSelected.Text.Substring(index + 1).Trim();
+                        Clipboard.SetText(data);
+                    }
+                }
+            }
+        }
+        private void OnCopyKey(object sender, EventArgs e)
+        {
+            this.Copy(true);
+        }
+        private void OnCopyValue(object sender, EventArgs e)
+        {
+            this.Copy(false);
+        }
+        private void OnMouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right && this.treeview.SelectedNode != null && this.treeview.SelectedNode.Name == LeafNode)
+            {
+                this.contextMenuStrip.Show(this.treeview, e.Location);
             }
         }
         /// <summary>
@@ -361,7 +405,6 @@ namespace SimpleJSONTreeViewer
                         parent = parent.Parent;
                     }
 
-
                     allMatchObjectPath.Add(list);
                 }
 
@@ -515,6 +558,7 @@ namespace SimpleJSONTreeViewer
 
                 default:
                     treeNode.Text = text + " : " + jToken.ToString();
+                    treeNode.Name = LeafNode;
                     break;
             }
 
